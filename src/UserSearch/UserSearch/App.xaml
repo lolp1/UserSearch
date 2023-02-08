@@ -4,6 +4,51 @@
              xmlns:local="clr-namespace:UserSearch"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <DataTemplate x:Key="UserDataTemplate">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="FontSize" Value="10"></Setter>
+
+                    </Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="10"></Setter>
+                    </Style>
+                </StackPanel.Resources>
+                <Label>Client Id</Label>
+               <TextBlock Text="{Binding ClientId}" />
+        
+                
+                <Label>First name</Label>
+                <TextBlock Text="{Binding FirstName}" />
+                
+                <Label>Last name</Label>
+                <TextBlock Text="{Binding LastName}" />
+                
+                <Label>Email</Label>
+                <TextBlock Text="{Binding Email}" />
+                
+                <Label>Is a business contact</Label>
+                <TextBlock Text="{Binding IsBusinessContact}" />
+                
+                <Label>Is an accounting contact</Label>
+                <TextBlock Text="{Binding IsAccountingContact}" />
+                
+                <Label>Is a technical contact</Label>
+                <TextBlock Text="{Binding IsTechnicalContact}" />
+                
+                <Label>Has API Access</Label>
+                <TextBlock Text="{Binding HasApiAccess}" />
+                
+                <Label>Id</Label>
+                <TextBlock Text="{Binding Id}" />
+                
+                <Label>Text</Label>
+                <TextBlock Text="{Binding Text}" />
+            </StackPanel>
+        </DataTemplate>
     </Application.Resources>
 </Application>

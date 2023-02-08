@@ -35,19 +35,19 @@ public interface ISerializationService
     /// <param name="path">The path where the object is read.</param>
     /// <param name="encoding">The character encoding to use. </param>
     /// <returns>The deserialized object.</returns>
-    T ImportFromFile<T>(string path, Encoding encoding);
+    T? ImportFromFile<T>(string path, Encoding encoding);
     /// <summary>
     /// Deserializes the specified file into an object using <see cref="Encoding.UTF8"/> encoding.
     /// </summary>
     /// <typeparam name="T">The type of the object to deserialize.</typeparam>
     /// <param name="path">The path where the object is read.</param>
     /// <returns>The deserialized object.</returns>
-    T ImportFromString<T>(string serializedObj);
+    T? ImportFromString<T>(string serializedObj);
     /// <summary>
     /// Deserializes the  document to the specified object.
     /// </summary>
     /// <typeparam name="T">The type of the object to deserialize.</typeparam>
     /// <param name="serializedObj">The string representing the serialized object.</param>
     /// <returns>The deserialized object.</returns>
-    T ImportFromFile<T>(string path);
+    T? ImportFromFile<T>(string path);
 }

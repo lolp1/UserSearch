@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -8,6 +9,7 @@ using System.Windows.Input;
 
 using UserSearch.Models;
 using UserSearch.Services;
+
 namespace UserSearch.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
@@ -17,15 +19,15 @@ namespace UserSearch.ViewModels
         );
         public ObservableCollection<User> Users { get; } = new ObservableCollection<User>();
 
-        public ICommand InitalizeUsers => new RelayCommand(() => LoadUsers(), () => true);
+        public ICommand InitalizeUsers => new RelayCommand(LoadUsers, () => true);
         public ICommand SearchByFirstNameCommand =>
-            new RelayCommand(() => SearchUsersByFirstName(), () => true);
+            new RelayCommand(SearchUsersByFirstName, () => true);
         public ICommand SearchByLastNameCommand =>
-            new RelayCommand(() => SearchUsersByLastName(), () => true);
+            new RelayCommand(SearchUsersByLastName, () => true);
         public ICommand SearchByFirstAndLastNameCommand =>
-            new RelayCommand(() => SearchUsersByFirstAndLastName(), () => true);
+            new RelayCommand(SearchUsersByFirstAndLastName, () => true);
         public ICommand SearchByEmailCommand =>
-            new RelayCommand(() => SearchUsersByEmail(), () => true);
+            new RelayCommand(SearchUsersByEmail, () => true);
 
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
@@ -34,20 +36,23 @@ namespace UserSearch.ViewModels
 
         private void SearchUsersByFirstName()
         {
-            if (string.IsNullOrEmpty(FirstName))
+            if(string.IsNullOrEmpty(FirstName))
             {
-                MessageBox.Show(
+                _ = MessageBox.Show(
                     "The first name field can not be empty when searching by first name."
                 );
                 return;
             }
+
             Users.Clear();
             var firstName = FirstName.ToLowerInvariant().Trim();
             var users =
                 from user in _repository.GetAll()
-                where user.FirstName.ToLowerInvariant() == firstName
+                let isMatchingFirstName = user.FirstName.ToLowerInvariant() == firstName
+                where isMatchingFirstName
+                orderby user.LastName
                 select user;
-            foreach (var user in users.ToArray())
+            foreach(var user in users.ToArray())
             {
                 Users.Add(user);
             }
@@ -55,77 +60,88 @@ namespace UserSearch.ViewModels
 
         private void SearchUsersByLastName()
         {
-            if (string.IsNullOrEmpty(LastName))
+            if(string.IsNullOrEmpty(LastName))
             {
-                MessageBox.Show(
+                _ = MessageBox.Show(
                     "The last name field can not be empty when searching by last name."
                 );
                 return;
             }
+
             Users.Clear();
             var lastName = LastName.ToLowerInvariant().Trim();
             var users =
                 from user in _repository.GetAll()
-                where user.LastName.ToLowerInvariant() == lastName
+                let isMatchingLastName = user.LastName.ToLowerInvariant() == lastName
+                where isMatchingLastName
+                orderby user.FirstName
                 select user;
-            foreach (var user in users.ToArray())
-            {
-                Users.Add(user);
-            }
+            AddUsersToView(users);
         }
+
         private void SearchUsersByFirstAndLastName()
         {
-            if (string.IsNullOrEmpty(FirstName))
+            if(string.IsNullOrEmpty(FirstName))
             {
-                MessageBox.Show(
+                _ = MessageBox.Show(
                     "The first name field can not be empty when searching by first and last name."
                 );
                 return;
             }
-            if (string.IsNullOrEmpty(LastName))
+
+            if(string.IsNullOrEmpty(LastName))
             {
-                MessageBox.Show(
+                _ = MessageBox.Show(
                     "The last name field can not be empty when searching by first and name."
                 );
                 return;
             }
+
             Users.Clear();
+
             var firstName = FirstName.ToLowerInvariant().Trim();
             var lastName = LastName.ToLowerInvariant().Trim();
+
             var users =
                 from user in _repository.GetAll()
-                where
-                    user.FirstName.ToLowerInvariant() == firstName
+                let isMatchingFirstLastName = user.FirstName.ToLowerInvariant() == firstName
                     && user.LastName.ToLowerInvariant() == lastName
+                where isMatchingFirstLastName
+                orderby user.FirstName
                 select user;
-            foreach (var user in users.ToArray())
-            {
-                Users.Add(user);
-            }
+            AddUsersToView(users);
         }
+
         private void SearchUsersByEmail()
         {
-            if (string.IsNullOrEmpty(Email))
+            if(string.IsNullOrEmpty(Email))
             {
-                MessageBox.Show("The email field can not be empty when searching by email.");
+                _ = MessageBox.Show("The email field can not be empty when searching by email.");
                 return;
             }
+
             var email = Email.ToLowerInvariant().Trim();
             var users =
                 from user in _repository.GetAll()
-                where user.Email.ToLowerInvariant() == email
+                let isMatchingEmail = user.Email.ToLowerInvariant() == email
+                where isMatchingEmail
+                orderby user.Email
                 select user;
             Users.Clear();
-            foreach (var user in users.ToArray())
-            {
-                Users.Add(user);
-            }
+            AddUsersToView(users);
         }
 
         private void LoadUsers()
         {
-            _repository.GetAll().ToList().ForEach(Users.Add);
+            var users = _repository.GetAll().OrderBy(user => user.FirstName);
+            AddUsersToView(users);
+        }
+        private void AddUsersToView(IEnumerable<User> users)
+        {
+            foreach(var user in users.ToArray())
+            {
+                Users.Add(user);
+            }
         }
     }
 }
-
